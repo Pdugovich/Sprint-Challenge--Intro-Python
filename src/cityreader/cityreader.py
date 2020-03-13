@@ -14,9 +14,36 @@
 #
 # Note that the first line of the CSV is header that describes the fields--this
 # should not be loaded into a City object.
+import csv 
+
+
+
+
+class City:
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
+  def __repr__(self):
+    return f'{self.name}, {self.lat}, {self.lon}'
+
+
 cities = []
 
 def cityreader(cities=[]):
+  with open('cities.csv','r') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    next(csv_reader)
+    for item in csv_reader:
+      """
+      Personal note: This part was very confusing, because my output 
+      looked absolutely correct, but I kept failing the test. 
+      What I ended up needing to do was cast the entries as the right
+      type. Otherwise I guess the floats came up as strings.
+      I don't know if I would have figured it out if I hadn't noticed my
+      outputs were keeping the trailing 0's after the decimal.
+      """
+      cities.append(City(name=str(item[0]), lat=float(item[3]), lon=float(item[4])))
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
@@ -63,7 +90,10 @@ for c in cities:
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
   within = []
-
+  for city in cities:
+    if (city.lat >= min([lat1, lat2]) and city.lat <=max([lat1, lat2]) and
+     city.lon >= min([lon1, lon2]) and city.lon <=max([lon1, lon2])):
+     within.append(city)
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
